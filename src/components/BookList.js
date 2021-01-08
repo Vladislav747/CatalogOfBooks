@@ -1,45 +1,51 @@
-import firebase from 'firebase';
-import React, { Component } from 'react';
+import firebase from "firebase";
+import React, { Component } from "react";
 
 class BookList extends Component {
-    constructor() {
-        super();
-        this.state = {
-            name: '',
-        };
-        
-    }
-    componentDidMount() {
-        this.getBook();
-    }
+  constructor() {
+    super();
+    this.state = {
+      name: "",
+      books: [],
+    };
+  }
+  componentDidMount() {
+    this.getBook();
+  }
 
-    getBook = () => {
-        const db = firebase.firestore();
-        return db.collection("bookList")
-        .get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                console.log(doc.data());
-               
-            })
-       
+  getBook = () => {
+    const db = firebase.firestore();
+    return db
+      .collection("bookList")
+      .get()
+      .then((querySnapshot) => {
+        //arrState - массив для вставки в state
+        let arrState = [];
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data());
+          arrState.push(doc.data());
         });
-       
-        // this.setState({
-        //     name: bookData.name
-        // })
-    }
+        return arrState;
+      })
+      .then((arr) =>
+        this.setState({
+          books: arr,
+        })
+      );
+  };
 
-    render() {
-        return (
-            <ul>
-                
-                {this.getBook}
-                Хочу здесь получить список книг
-                {this.state.name}
-            </ul>
-        )
-    }
+  render() {
+    return (
+      <ul>
+        Хочу здесь получить список книг и в итоге получила
+        {this.state.books.map((el) => (
+          <li>
+            <div>{el.name}</div>
+          </li>
+        ))}
+      </ul>
+    );
+  }
 }
 
 export default BookList;
